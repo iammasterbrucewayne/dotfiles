@@ -18,6 +18,14 @@
     lib = nixpkgs.lib;
     username = "simple";
 
+    mkPkgs = system: import nixpkgs {
+      inherit system;
+      config.allowUnfree = true;
+    };
+
+    pkgsDarwin = mkPkgs "aarch64-darwin";
+    pkgsLinux  = mkPkgs "x86_64-linux";
+
     mkHomeConfig = pkgs: {
       home.username = lib.mkForce username;
       home.homeDirectory = lib.mkForce (
@@ -60,15 +68,15 @@
 
     homeConfigurations = {
       "${username}@meow" = home-manager.lib.homeManagerConfiguration {
-        pkgs = nixpkgs.legacyPackages.aarch64-darwin;
-        modules = [ (mkHomeConfig nixpkgs.legacyPackages.aarch64-darwin) ];
+        pkgs = pkgsDarwin;
+        modules = [ (mkHomeConfig pkgsDarwin) ];
       };
       
       "${username}@linux-desktop" = home-manager.lib.homeManagerConfiguration {
-        pkgs = nixpkgs.legacyPackages.x86_64-linux;
+        pkgs = pkgsLinux;
         extraSpecialArgs = { inherit inputs; };
         modules = [
-        (mkHomeConfig nixpkgs.legacyPackages.x86_64-linux)
+        (mkHomeConfig pkgsLinux)
         ./modules/walls.nix
         ];
       };
