@@ -73,6 +73,7 @@
           tmux
           zoxide
           fzf
+          fd
           stow
           nodejs
           nerd-fonts.jetbrains-mono
