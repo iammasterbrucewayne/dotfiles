@@ -37,6 +37,16 @@ if $IS_MACOS; then
     fi
   fi
 
+  # zsh plugins via nix (check after brew so nix takes precedence if both present)
+  for nix_profile in "$HOME/.local/state/nix/profiles/home-manager" "$HOME/.local/state/home-manager/gcroots/current-home" "/etc/profiles/per-user/$USER" "$HOME/.nix-profile"; do
+    [ -r "$nix_profile/home-path/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ] \
+      && source "$nix_profile/home-path/share/zsh-autosuggestions/zsh-autosuggestions.zsh" && break
+  done
+  for nix_profile in "$HOME/.local/state/nix/profiles/home-manager" "$HOME/.local/state/home-manager/gcroots/current-home" "/etc/profiles/per-user/$USER" "$HOME/.nix-profile"; do
+    [ -r "$nix_profile/home-path/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ] \
+      && source "$nix_profile/home-path/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" && break
+  done
+
   # MongoDB (if installed via brew tap)
   for p in /opt/homebrew/opt/mongodb-community@4.4/bin; do
     [ -d "$p" ] && case ":$PATH:" in *":$p:"*) ;; *) PATH="$p:$PATH" ;; esac
