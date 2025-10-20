@@ -10,6 +10,16 @@ case "$OSTYPE" in
   linux*)  IS_LINUX=true ;;
 esac
 
+### ── Environment Variables ────────────────────────────────────────────────────
+# Set default editor (prefer nvim, fallback to vim)
+if command -v nvim >/dev/null 2>&1; then
+  export EDITOR="nvim"
+  export VISUAL="nvim"
+elif command -v vim >/dev/null 2>&1; then
+  export EDITOR="vim"
+  export VISUAL="vim"
+fi
+
 ### ── macOS-only: Homebrew, MongoDB, LLVM, Xcode SDK ─────────────────────────
 if $IS_MACOS; then
   # Prefer Homebrew in PATH
