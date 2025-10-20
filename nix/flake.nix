@@ -132,7 +132,7 @@
 
           homebrew = {
             enable = true;
-            taps = ["nikitabobko/tap"];
+            taps = ["nikitabobko/tap" "FelixKratz/formulae"];
             casks = [
               "ghostty"
               "aerospace"
@@ -159,7 +159,7 @@
               autoUpdate = true;
               cleanup = "zap";
             };
-            brews = ["dockutil" "1password-cli"];
+            brews = ["dockutil" "sketchybar"];
           };
 
           system.primaryUser = username;
