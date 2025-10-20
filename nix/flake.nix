@@ -54,6 +54,14 @@
         ".config/sketchybar".source = ../sketchybar;
       };
 
+      # Activation scripts
+      home.activation.installTpm = lib.mkAfter ''
+        TPM_DIR="$HOME/.config/tmux/plugins/tpm"
+        if [ ! -d "$TPM_DIR" ]; then
+          ${pkgs.git}/bin/git clone https://github.com/tmux-plugins/tpm "$TPM_DIR"
+        fi
+      '';
+
       # Programs managed by Home Manager
       # programs.zsh.enable = true;
       # programs.tmux.enable = true;
