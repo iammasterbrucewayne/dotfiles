@@ -42,7 +42,7 @@ return {
       -- ... all other dependencies ...
       "nvim-mini/mini.pick",
       "nvim-telescope/telescope.nvim",
-      "hrsh7th/nvim-cmp",
+      "saghen/blink.cmp",
       "ibhagwan/fzf-lua",
       "stevearc/dressing.nvim",
       "folke/snacks.nvim",
