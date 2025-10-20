@@ -79,6 +79,8 @@
           yazi
           lsd
           lazygit
+          zsh-autosuggestions
+          zsh-syntax-highlighting
         ]
         ++ (
           if pkgs.stdenv.isLinux
