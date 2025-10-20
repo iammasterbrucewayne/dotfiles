@@ -128,3 +128,14 @@ fi
 if command -v zoxide >/dev/null 2>&1; then
   eval "$(zoxide init --cmd cd zsh)"
 fi
+
+### ── Aliases ───────────────────────────────────────────────────────────────────
+# lsd (modern ls replacement with icons)
+if command -v lsd >/dev/null 2>&1; then
+  alias ls='lsd -1 --group-dirs=first'                           # Single column
+  alias la='lsd -1 -a --group-dirs=first'                        # Single column + hidden files
+  alias lg='lsd --group-dirs=first'           # Grid layout, dirs first
+  alias ll='lsd -l --group-dirs=first'        # Long format
+  alias lla='lsd -la --group-dirs=first'      # Long format + hidden files
+  alias lt='lsd --tree'                       # Tree view
+fi
