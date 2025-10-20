@@ -161,3 +161,15 @@ if command -v yazi >/dev/null 2>&1; then
     rm -f -- "$tmp"
   }
 fi
+
+# Cross-platform clipboard (copy to clipboard)
+if command -v pbcopy >/dev/null 2>&1; then
+  # macOS
+  alias clip='pbcopy'
+elif command -v xclip >/dev/null 2>&1; then
+  # Linux (X11)
+  alias clip='xclip -selection clipboard'
+elif command -v wl-copy >/dev/null 2>&1; then
+  # Linux (Wayland)
+  alias clip='wl-copy'
+fi

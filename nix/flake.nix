@@ -111,6 +111,7 @@
       with pkgs; [
         vivaldi # macOS uses Homebrew cask
         ghostty # macOS uses Homebrew cask
+        xclip   # Clipboard tool (macOS has pbcopy built-in)
       ];
 
     # ══════════════════════════════════════════════════════════════════════════
