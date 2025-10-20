@@ -50,6 +50,8 @@
         nodejs
         nerd-fonts.jetbrains-mono
         vivaldi
+        yazi
+        lsd
       ];
 
       home.stateVersion = "25.05";
