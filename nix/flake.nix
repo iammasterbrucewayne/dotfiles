@@ -79,6 +79,7 @@
           bat
           yazi
           lsd
+          gh
           lazygit
           zsh-autosuggestions
           zsh-syntax-highlighting
