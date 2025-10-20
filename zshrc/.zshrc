@@ -149,3 +149,15 @@ if command -v lsd >/dev/null 2>&1; then
   alias lla='lsd -la --group-dirs=first'      # Long format + hidden files
   alias lt='lsd --tree'                       # Tree view
 fi
+
+# yazi (file manager with cd on exit)
+if command -v yazi >/dev/null 2>&1; then
+  function y() {
+    local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
+    yazi "$@" --cwd-file="$tmp"
+    if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+      cd -- "$cwd"
+    fi
+    rm -f -- "$tmp"
+  }
+fi
