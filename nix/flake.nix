@@ -78,6 +78,7 @@
           nerd-fonts.jetbrains-mono
           yazi
           lsd
+          lazygit
         ]
         ++ (
           if pkgs.stdenv.isLinux
