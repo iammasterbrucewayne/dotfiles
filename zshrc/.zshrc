@@ -173,3 +173,82 @@ elif command -v wl-copy >/dev/null 2>&1; then
   # Linux (Wayland)
   alias clip='wl-copy'
 fi
+
+# YouTube browsing & playback (yt-dlp + fzf + mpv)
+if command -v yt-dlp >/dev/null 2>&1 && command -v fzf >/dev/null 2>&1 && command -v mpv >/dev/null 2>&1; then
+  # Search and play YouTube video
+  function yt() {
+    local query="$*"
+    if [ -z "$query" ]; then
+      echo "Usage: yt <search query>"
+      return 1
+    fi
+    
+    # Get results with both title and ID, format as "TITLE [ID]"
+    local selected=$(yt-dlp "ytsearch20:$query" \
+      --get-title --get-id --flat-playlist 2>/dev/null | \
+      awk 'NR%2{title=$0; next} {printf "%s [%s]\n", title, $0}' | \
+      fzf --ansi \
+          --height=100% \
+          --layout=reverse \
+          --border \
+          --prompt="Select video: " \
+          --preview-window=up:3:wrap \
+          --preview='echo {}' | \
+      sed -n 's/.*\[\(.*\)\]/\1/p')
+    
+    if [ -n "$selected" ]; then
+      mpv "https://youtube.com/watch?v=$selected"
+    fi
+  }
+  
+  # Audio-only version (music, no ads!)
+  function yta() {
+    local query="$*"
+    if [ -z "$query" ]; then
+      echo "Usage: yta <search query>"
+      return 1
+    fi
+    
+    local selected=$(yt-dlp "ytsearch20:$query" \
+      --get-title --get-id --flat-playlist 2>/dev/null | \
+      awk 'NR%2{title=$0; next} {printf "%s [%s]\n", title, $0}' | \
+      fzf --ansi \
+          --height=100% \
+          --layout=reverse \
+          --border \
+          --prompt="Select audio: " \
+          --preview-window=up:3:wrap \
+          --preview='echo {}' | \
+      sed -n 's/.*\[\(.*\)\]/\1/p')
+    
+    if [ -n "$selected" ]; then
+      mpv --no-video "https://youtube.com/watch?v=$selected"
+    fi
+  }
+  
+  # Download video
+  function ytd() {
+    local query="$*"
+    if [ -z "$query" ]; then
+      echo "Usage: ytd <search query>"
+      return 1
+    fi
+    
+    local selected=$(yt-dlp "ytsearch20:$query" \
+      --get-title --get-id --flat-playlist 2>/dev/null | \
+      awk 'NR%2{title=$0; next} {printf "%s [%s]\n", title, $0}' | \
+      fzf --ansi \
+          --height=100% \
+          --layout=reverse \
+          --border \
+          --prompt="Select to download: " \
+          --preview-window=up:3:wrap \
+          --preview='echo {}' | \
+      sed -n 's/.*\[\(.*\)\]/\1/p')
+    
+    if [ -n "$selected" ]; then
+      yt-dlp "https://youtube.com/watch?v=$selected"
+    fi
+  }
+fi
