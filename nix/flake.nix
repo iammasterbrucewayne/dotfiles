@@ -82,8 +82,17 @@
           lsd
           gh
           lazygit
+          cmatrix
+          ripgrep
+          xh
           zsh-autosuggestions
           zsh-syntax-highlighting
+          # --- fun stuff ---
+          # fortune
+          # figlet
+          # cava
+          # cowsay
+          # lolcat
         ]
         ++ (
           if pkgs.stdenv.isLinux
