@@ -72,6 +72,7 @@
         fd
         ripgrep
         bat
+        glow # markdown reader
         yazi
         lsd
         stow
