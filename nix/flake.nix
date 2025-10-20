@@ -98,6 +98,7 @@
     funPackages = pkgs:
       with pkgs; [
         cava
+        clock-rs
         cowsay
         fortune
         figlet
