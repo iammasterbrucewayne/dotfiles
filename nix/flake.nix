@@ -76,6 +76,7 @@
           stow
           nodejs
           nerd-fonts.jetbrains-mono
+          bat
           yazi
           lsd
           lazygit
