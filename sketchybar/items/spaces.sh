@@ -27,7 +27,7 @@ done
 
 sketchybar   --add item       separator left                          \
              --set separator  icon=                                  \
-                              icon.font="Hack Nerd Font:Regular:16.0" \
+                              icon.font="JetBrainsMonoNL Nerd Font Mono:Regular:16.0" \
                               background.padding_left=15              \
                               background.padding_right=15             \
                               label.drawing=off                       \
