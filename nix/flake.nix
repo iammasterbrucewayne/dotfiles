@@ -143,6 +143,7 @@
           ".config/aerospace/aerospace.toml".source = ../aerospace/aerospace.toml;
           ".hammerspoon".source = ../hammerspoon;
           ".config/sketchybar".source = ../sketchybar;
+          ".config/youtube-tui".source = ../youtube-tui;
         };
 
         # Packages
