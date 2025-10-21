@@ -184,18 +184,55 @@ if command -v yt-dlp >/dev/null 2>&1 && command -v fzf >/dev/null 2>&1 && comman
       return 1
     fi
     
-    # Get results with both title and ID, format as "TITLE [ID]"
-    local selected=$(yt-dlp "ytsearch20:$query" \
+    local tmp_dir=$(mktemp -d)
+    trap "rm -rf $tmp_dir" EXIT
+    
+    # Create a preview script for fzf
+    cat > "$tmp_dir/preview.sh" << 'PREVIEW_EOF'
+#!/bin/bash
+line="$1"
+tmp_dir="$2"
+
+title=$(echo "$line" | cut -f1)
+id=$(echo "$line" | cut -f2)
+thumb=$(echo "$line" | cut -f3)
+thumb_file="$tmp_dir/$id.jpg"
+
+# Download thumbnail if not cached
+if [ ! -f "$thumb_file" ]; then
+  curl -s "$thumb" -o "$thumb_file" 2>/dev/null
+fi
+
+# Display with chafa if available
+if [ -f "$thumb_file" ] && command -v chafa >/dev/null 2>&1; then
+  chafa -f symbols -s 60x20 "$thumb_file" 2>/dev/null
+fi
+
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "📹 $title"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "🆔 $id"
+PREVIEW_EOF
+    
+    chmod +x "$tmp_dir/preview.sh"
+    
+    # Get results fast with --flat-playlist, construct thumbnail URLs manually
+    yt-dlp "ytsearch20:$query" \
       --get-title --get-id --flat-playlist 2>/dev/null | \
-      awk 'NR%2{title=$0; next} {printf "%s [%s]\n", title, $0}' | \
+      awk 'NR%2==1{title=$0} NR%2==0{id=$0; printf "%s\t%s\thttps://i.ytimg.com/vi/%s/hqdefault.jpg\n", title, id, id}' > "$tmp_dir/results.txt"
+    
+    local selected=$(cat "$tmp_dir/results.txt" | \
       fzf --ansi \
           --height=100% \
           --layout=reverse \
           --border \
-          --prompt="Select video: " \
-          --preview-window=up:3:wrap \
-          --preview='echo {}' | \
-      sed -n 's/.*\[\(.*\)\]/\1/p')
+          --delimiter='\t' \
+          --with-nth=1 \
+          --prompt="📺 Select video: " \
+          --preview-window='right:50%' \
+          --preview="$tmp_dir/preview.sh {} $tmp_dir" | \
+      cut -f2)
     
     if [ -n "$selected" ]; then
       mpv "https://youtube.com/watch?v=$selected"
@@ -210,17 +247,45 @@ if command -v yt-dlp >/dev/null 2>&1 && command -v fzf >/dev/null 2>&1 && comman
       return 1
     fi
     
-    local selected=$(yt-dlp "ytsearch20:$query" \
+    local tmp_dir=$(mktemp -d)
+    trap "rm -rf $tmp_dir" EXIT
+    
+    yt-dlp "ytsearch20:$query" \
       --get-title --get-id --flat-playlist 2>/dev/null | \
-      awk 'NR%2{title=$0; next} {printf "%s [%s]\n", title, $0}' | \
+      awk 'NR%2==1{title=$0} NR%2==0{id=$0; printf "%s\t%s\thttps://i.ytimg.com/vi/%s/hqdefault.jpg\n", title, id, id}' > "$tmp_dir/results.txt"
+    
+    local selected=$(cat "$tmp_dir/results.txt" | \
       fzf --ansi \
           --height=100% \
           --layout=reverse \
           --border \
-          --prompt="Select audio: " \
-          --preview-window=up:3:wrap \
-          --preview='echo {}' | \
-      sed -n 's/.*\[\(.*\)\]/\1/p')
+          --delimiter='\t' \
+          --with-nth=1 \
+          --prompt="🎵 Select audio: " \
+          --preview-window='right:50%' \
+          --preview="
+            title=\$(echo {} | cut -f1)
+            id=\$(echo {} | cut -f2)
+            thumb=\$(echo {} | cut -f3)
+            thumb_file=\"$tmp_dir/\$id.jpg\"
+            
+            if [ ! -f \"\$thumb_file\" ]; then
+              curl -s \"\$thumb\" -o \"\$thumb_file\" 2>/dev/null
+            fi
+            
+            if [ -f \"\$thumb_file\" ] && [ \"\$TERM\" = \"xterm-ghostty\" ]; then
+              printf '\033_Gf=100,a=T,t=f;'
+              base64 < \"\$thumb_file\"
+              printf '\033\\\\\n'
+            fi
+            
+            echo ''
+            echo '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'
+            echo \"🎵 \$title\"
+            echo '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'
+            echo \"🆔 \$id\"
+          " | \
+      cut -f2)
     
     if [ -n "$selected" ]; then
       mpv --no-video "https://youtube.com/watch?v=$selected"
@@ -235,17 +300,45 @@ if command -v yt-dlp >/dev/null 2>&1 && command -v fzf >/dev/null 2>&1 && comman
       return 1
     fi
     
-    local selected=$(yt-dlp "ytsearch20:$query" \
+    local tmp_dir=$(mktemp -d)
+    trap "rm -rf $tmp_dir" EXIT
+    
+    yt-dlp "ytsearch20:$query" \
       --get-title --get-id --flat-playlist 2>/dev/null | \
-      awk 'NR%2{title=$0; next} {printf "%s [%s]\n", title, $0}' | \
+      awk 'NR%2==1{title=$0} NR%2==0{id=$0; printf "%s\t%s\thttps://i.ytimg.com/vi/%s/hqdefault.jpg\n", title, id, id}' > "$tmp_dir/results.txt"
+    
+    local selected=$(cat "$tmp_dir/results.txt" | \
       fzf --ansi \
           --height=100% \
           --layout=reverse \
           --border \
-          --prompt="Select to download: " \
-          --preview-window=up:3:wrap \
-          --preview='echo {}' | \
-      sed -n 's/.*\[\(.*\)\]/\1/p')
+          --delimiter='\t' \
+          --with-nth=1 \
+          --prompt="💾 Select to download: " \
+          --preview-window='right:50%' \
+          --preview="
+            title=\$(echo {} | cut -f1)
+            id=\$(echo {} | cut -f2)
+            thumb=\$(echo {} | cut -f3)
+            thumb_file=\"$tmp_dir/\$id.jpg\"
+            
+            if [ ! -f \"\$thumb_file\" ]; then
+              curl -s \"\$thumb\" -o \"\$thumb_file\" 2>/dev/null
+            fi
+            
+            if [ -f \"\$thumb_file\" ] && [ \"\$TERM\" = \"xterm-ghostty\" ]; then
+              printf '\033_Gf=100,a=T,t=f;'
+              base64 < \"\$thumb_file\"
+              printf '\033\\\\\n'
+            fi
+            
+            echo ''
+            echo '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'
+            echo \"💾 \$title\"
+            echo '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'
+            echo \"🆔 \$id\"
+          " | \
+      cut -f2)
     
     if [ -n "$selected" ]; then
       yt-dlp "https://youtube.com/watch?v=$selected"

@@ -93,6 +93,7 @@
         # Media & YouTube
         mpv # Media player
         yt-dlp # YouTube downloader/fetcher
+        chafa # Display images in terminal previews
 
         # Other
         nerd-fonts.jetbrains-mono
