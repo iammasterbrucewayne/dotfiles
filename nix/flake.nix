@@ -93,7 +93,7 @@
         # Media & YouTube
         mpv # Media player
         yt-dlp # YouTube downloader/fetcher
-        chafa # Display images in terminal previews
+        viu # Display images in terminal (better quality than chafa)
 
         # Other
         nerd-fonts.jetbrains-mono

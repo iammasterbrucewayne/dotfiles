@@ -203,9 +203,9 @@ if [ ! -f "$thumb_file" ]; then
   curl -s "$thumb" -o "$thumb_file" 2>/dev/null
 fi
 
-# Display with chafa if available
-if [ -f "$thumb_file" ] && command -v chafa >/dev/null 2>&1; then
-  chafa -f symbols -s 60x20 "$thumb_file" 2>/dev/null
+# Display with viu (better quality, uses Kitty protocol when available)
+if [ -f "$thumb_file" ] && command -v viu >/dev/null 2>&1; then
+  viu -w 60 -h 20 "$thumb_file" 2>/dev/null
 fi
 
 echo ""
