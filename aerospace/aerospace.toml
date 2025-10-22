@@ -199,21 +199,17 @@ alt-shift-tab = 'move-workspace-to-monitor --wrap-around next'
 alt-shift-semicolon = 'mode service'
 alt-shift-enter = 'mode apps'
 
-alt-t = 'exec-and-forget open -a /Applications/Telegram.app'
-alt-a = 'exec-and-forget open -a /Applications/Arc.app'
+alt-a = 'exec-and-forget open -a /Applications/Vivaldi.app'
 alt-o = 'exec-and-forget open -a /Applications/Obsidian.app'
-alt-b = 'exec-and-forget open -a /Applications/Brain.fm.app'
-alt-s = 'exec-and-forget open -a /Applications/Slack.app'
-alt-q = 'exec-and-forget open -a /System/Applications/QuickTime Player.app'
-alt-w = 'exec-and-forget open -a /Applications/WezTerm.app'
-alt-c = 'exec-and-forget open -a /Applications/Claude.app'
+
 
 # New application shortcuts
 alt-v = 'exec-and-forget open -a /Applications/Vivaldi.app'
-alt-g = 'exec-and-forget open -a /Applications/Ghostty.app'
-alt-m = 'exec-and-forget open -a /Applications/Stremio.app'
-alt-u = 'exec-and-forget open -a /Applications/Cursor.app'
-alt-y = 'exec-and-forget osascript -e "tell application \"Vivaldi\" to activate" -e "tell application \"System Events\" to keystroke \"t\" using command down" -e "tell application \"System Events\" to keystroke \"youtube.com\" & return"'
+alt-t = 'exec-and-forget open -a /Applications/Ghostty.app'
+alt-s = 'exec-and-forget open -a /Applications/Stremio.app'
+alt-c = 'exec-and-forget open -a /Applications/Cursor.app'
+alt-g = 'exec-and-forget open -a /Applications/ChatGPT.app'
+alt-y = 'exec-and-forget open -a /Applications/Vivaldi.app --args --new-window https://youtube.com'
 
 
 # 'service' binding mode declaration.
