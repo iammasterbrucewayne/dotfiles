@@ -94,6 +94,9 @@
         mpv # Media player
         youtube-tui
 
+        # Message & Chat
+        discordo
+
         # Other
         nerd-fonts.jetbrains-mono
         cmatrix
