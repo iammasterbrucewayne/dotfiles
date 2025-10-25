@@ -92,6 +92,7 @@
 
         # Media & YouTube
         mpv # Media player
+        ncspot
         youtube-tui
 
         # Message & Chat
