@@ -125,6 +125,14 @@ if $IS_LINUX; then
   [ -r "/etc/zsh/zsh-syntax-highlighting.zsh" ] && source "/etc/zsh/zsh-syntax-highlighting.zsh"
 fi
 
+### ── User-local tool bins (portable, no hardcoded username) ─────────────────
+for p in "$HOME/.local/bin" "$HOME/.opencode/bin" "$HOME/.foundry/bin"; do
+  [ -d "$p" ] && case ":$PATH:" in *":$p:"*) ;; *) PATH="$p:$PATH" ;; esac
+done
+
+### ── Optional host-local overrides (kept out of git) ────────────────────────
+[ -r "$HOME/.zsh.local" ] && source "$HOME/.zsh.local"
+
 export PATH
 
 ### ── Shared keybindings (only if widgets exist) ──────────────────────────────

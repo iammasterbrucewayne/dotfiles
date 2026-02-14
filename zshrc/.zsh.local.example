@@ -1,0 +1,10 @@
+# Copy to ~/.zsh.local for machine-specific shell settings.
+# This file is intentionally not tracked.
+
+# Example: add per-user Python user scripts path (if needed)
+# for p in "$HOME/Library/Python"/*/bin(N); do
+#   [ -d "$p" ] && case ":$PATH:" in *":$p:"*) ;; *) PATH="$p:$PATH" ;; esac
+# done
+
+# Example: private tokens/variables
+# export SOME_PRIVATE_TOKEN="..."
