@@ -10,6 +10,24 @@ case "$OSTYPE" in
   linux*)  IS_LINUX=true ;;
 esac
 
+### ── Theme mode (COLOR_MODE for Neovim; Ghostty follows system) ───────────────
+[ -f "$HOME/.config/theme-mode" ] && . "$HOME/.config/theme-mode"
+theme() {
+  local mode="${1:-}"
+  case "$mode" in
+    light|dark)
+      mkdir -p "$HOME/.config"
+      echo "export COLOR_MODE=$mode" > "$HOME/.config/theme-mode"
+      export COLOR_MODE=$mode
+      echo "Theme set to $mode (new shells and Neovim will use it)"
+      ;;
+    *)
+      echo "Usage: theme light|dark" >&2
+      return 1
+      ;;
+  esac
+}
+
 ### ── Environment Variables ────────────────────────────────────────────────────
 # Set default editor (prefer nvim, fallback to vim)
 if command -v nvim >/dev/null 2>&1; then
