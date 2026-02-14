@@ -10,8 +10,27 @@ case "$OSTYPE" in
   linux*)  IS_LINUX=true ;;
 esac
 
-### ── Theme mode (COLOR_MODE for Neovim; Ghostty follows system) ───────────────
+### ── Theme mode (COLOR_MODE for Neovim/tmux; Ghostty follows system) ──────────
 [ -f "$HOME/.config/theme-mode" ] && . "$HOME/.config/theme-mode"
+# Write tmux Catppuccin flavor so status bar matches light/dark (sourced by tmux.conf).
+_tmux_catppuccin_flavor_sync() {
+  local mode="${COLOR_MODE:-}"
+  if [ -z "$mode" ] && [ -f "$HOME/.config/theme-mode" ]; then
+    . "$HOME/.config/theme-mode"
+    mode="${COLOR_MODE:-}"
+  fi
+  if [ -z "$mode" ] && [ "$(uname -s)" = "Darwin" ]; then
+    mode=$(defaults read -g AppleInterfaceStyle 2>/dev/null || true)
+    [ "$mode" = "Dark" ] && mode=dark || mode=light
+  fi
+  [ -z "$mode" ] && mode=dark
+  local flavor="macchiato"
+  [ "$mode" = "light" ] && flavor="latte"
+  mkdir -p "$HOME/.config/tmux"
+  printf '%s\n' "set -g @catppuccin_flavor \"$flavor\"" > "$HOME/.config/tmux/catppuccin-flavor.conf"
+}
+_tmux_catppuccin_flavor_sync
+unset -f _tmux_catppuccin_flavor_sync
 theme() {
   local mode="${1:-}"
   case "$mode" in
@@ -19,7 +38,13 @@ theme() {
       mkdir -p "$HOME/.config"
       echo "export COLOR_MODE=$mode" > "$HOME/.config/theme-mode"
       export COLOR_MODE=$mode
-      echo "Theme set to $mode (new shells and Neovim will use it)"
+      mkdir -p "$HOME/.config/tmux"
+      if [ "$mode" = "light" ]; then
+        printf '%s\n' 'set -g @catppuccin_flavor "latte"' > "$HOME/.config/tmux/catppuccin-flavor.conf"
+      else
+        printf '%s\n' 'set -g @catppuccin_flavor "macchiato"' > "$HOME/.config/tmux/catppuccin-flavor.conf"
+      fi
+      echo "Theme set to $mode (new shells and Neovim will use it; reload tmux with prefix+R for status bar)"
       ;;
     *)
       echo "Usage: theme light|dark" >&2
