@@ -4,6 +4,14 @@ return {
   {
     "nvim-treesitter/nvim-treesitter",
     opts = function(_, opts)
+      if type(opts.ensure_installed) == "table" then
+        for _, lang in ipairs({ "html", "javascript", "typescript", "tsx", "css", "json" }) do
+          if not vim.tbl_contains(opts.ensure_installed, lang) then
+            table.insert(opts.ensure_installed, lang)
+          end
+        end
+      end
+
       opts.highlight = opts.highlight or {}
       opts.highlight.disable = opts.highlight.disable or {}
       vim.list_extend(opts.highlight.disable, { "cpp" })

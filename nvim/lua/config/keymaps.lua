@@ -13,12 +13,20 @@ local function as_string(v)
   return nil
 end
 
+local function clang_bin()
+  if vim.fn.executable("clang++") ~= 1 then
+    err("clang++ is not available in PATH.")
+    return nil
+  end
+  return as_string(vim.fn.exepath("clang++")) or "clang++"
+end
+
 -- Toggle Catppuccin light/dark (latte/Macchiato)
 vim.keymap.set("n", "<leader>ut", "<cmd>CatppuccinToggle<cr>", { desc = "Toggle light/dark theme" })
 
--- C++: quick compile/run, dev compile (clang++ + ASan), or build (make). Fail safely.
+-- C++: quick compile/run, dev compile (clang++ + ASan), or build (make). Always clang++ + C++20.
 vim.keymap.set("n", "<leader>cc", function()
-  local ok, raw_file = pcall(vim.fn.expand, "%")
+  local ok, raw_file = pcall(vim.fn.expand, "%:p")
   local file = ok and as_string(raw_file) or nil
   if not file or file == "" then
     err("No file path (unsaved or invalid buffer). Save the file or open a .cpp file.")
@@ -32,8 +40,26 @@ vim.keymap.set("n", "<leader>cc", function()
     err("Not a .cpp file. Current buffer: " .. (file == "" and "(unnamed)" or file))
     return
   end
+  local out = as_string(vim.fn.fnamemodify(file, ":r"))
+  local clang = clang_bin()
+  if not out or out == "" or not clang then
+    err("Could not derive compile command.")
+    return
+  end
   pcall(function()
-    vim.cmd("terminal g++ -o %:p:r % && %:p:r")
+    local cmd = table.concat({
+      vim.fn.shellescape(clang),
+      "-std=c++20",
+      "-Wall",
+      "-Wextra",
+      "-Wpedantic",
+      vim.fn.shellescape(file),
+      "-o",
+      vim.fn.shellescape(out),
+      "&&",
+      vim.fn.shellescape(out),
+    }, " ")
+    vim.cmd("terminal " .. cmd)
   end)
 end, { desc = "Compile and run current C++ file" })
 
@@ -64,10 +90,16 @@ vim.keymap.set("n", "<leader>cC", function()
     err("Could not derive output name from path.")
     return
   end
+  local clang = clang_bin()
+  if not clang then
+    return
+  end
 
   local cmd = table.concat({
     "cd " .. vim.fn.shellescape(dir),
-    "&& clang++ -std=c++20 -Wall -Wextra -Wpedantic -g -fsanitize=address "
+    "&& "
+      .. vim.fn.shellescape(clang)
+      .. " -std=c++20 -Wall -Wextra -Wpedantic -g -fsanitize=address "
       .. vim.fn.shellescape(name)
       .. " -o "
       .. vim.fn.shellescape(out),
@@ -83,10 +115,19 @@ vim.keymap.set("n", "<leader>cC", function()
 end, { desc = "Dev build (clang++/ASan) + run" })
 
 vim.keymap.set("n", "<leader>cb", function()
+  local clang = clang_bin()
+  if not clang then
+    return
+  end
   local ran = pcall(function()
-    vim.cmd("make")
+    local cmd = table.concat({
+      "make",
+      "CXX=" .. vim.fn.shellescape(clang),
+      "CXXFLAGS+=" .. vim.fn.shellescape("-std=c++20"),
+    }, " ")
+    vim.cmd("terminal " .. cmd)
   end)
   if not ran then
     err("Failed to run make.")
   end
-end, { desc = "Build (make)" })
+end, { desc = "Build (make with clang++/C++20)" })
