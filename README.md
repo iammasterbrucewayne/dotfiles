@@ -64,3 +64,4 @@ ls -ld "$LIB/themes"    # -> ~/.config/ghostty/themes
 
 - [tmux](tmux/README.md)
 - [ghostty](ghostty/README.md)
+- [lazygit](lazygit/README.md)

@@ -146,6 +146,7 @@
           ".config/ghostty/config".source = ../ghostty/config;
           ".config/ghostty/themes".source = ../ghostty/themes;
           ".config/aerospace/aerospace.toml".source = ../aerospace/aerospace.toml;
+          ".config/lazygit".source = ../lazygit;
           ".hammerspoon".source = ../hammerspoon;
           ".config/sketchybar".source = ../sketchybar;
           ".config/youtube-tui".source = ../youtube-tui;
