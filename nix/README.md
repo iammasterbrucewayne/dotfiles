@@ -16,10 +16,10 @@ This repository assumes your flake.nix is in a subdirectory (e.g., `./nix/`).
    sh <(curl -L https://nixos.org/nix/install) --daemon
    ```
 
-3. **Configure Flake:** Replace `username = "simple";` with your actual macOS username.
+3. **Configure Flake:** Replace `username = "batman";` with your actual macOS username.
 
    ```bash
-   sed -i '' "s@simple@$(whoami)@g" flake.nix
+   sed -i '' "s@batman@$(whoami)@g" flake.nix
    ```
 
 ## 2. Initial Configuration and Subsequent Updates

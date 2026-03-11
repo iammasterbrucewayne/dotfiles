@@ -30,7 +30,7 @@
     # ══════════════════════════════════════════════════════════════════════════
     # System Configuration
     # ══════════════════════════════════════════════════════════════════════════
-    username = "simple";
+    username = "batman";
     lib = nixpkgs.lib;
 
     # Optional features (toggle these on/off)
@@ -142,6 +142,7 @@
           ".config/nvim".source = ../nvim;
           ".config/tmux/tmux.conf".source = ../tmux/tmux.conf;
           ".config/tmux/tmux.reset.conf".source = ../tmux/tmux.reset.conf;
+          ".config/tmux/theme-auto-sync.sh".source = ../tmux/theme-auto-sync.sh;
           ".config/ghostty/config".source = ../ghostty/config;
           ".config/ghostty/themes".source = ../ghostty/themes;
           ".config/aerospace/aerospace.toml".source = ../aerospace/aerospace.toml;
