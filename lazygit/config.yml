@@ -104,27 +104,27 @@ customCommands:
           {{ .Form.Issues }}
           {{end}}
 
-  - key: "G"
-    description: "Prewarm AI commit draft cache"
+  - key: "A"
+    description: "Generate AI commit draft"
     context: "files"
     loadingText: "Generating AI draft..."
     output: "popup"
     outputTitle: "AI Commit Draft"
     command: '"$HOME/.config/lazygit/scripts/lazygit-ai-commit-draft" prewarm'
 
-  - key: "A"
-    description: "AI commit (prefilled summary + description)"
+  - key: "E"
+    description: "Edit AI draft and commit"
     context: "files"
     loadingText: "Creating commit..."
     prompts:
       - type: "input"
         title: "Commit summary"
         key: "Summary"
-        initialValue: '{{ runCommand "bash -lc \"$HOME/.config/lazygit/scripts/lazygit-ai-commit-draft subject\"" }}'
+        initialValue: '{{ runCommand "bash -lc \"$HOME/.config/lazygit/scripts/lazygit-ai-commit-draft cached_subject\"" }}'
       - type: "input"
         title: "Commit description (optional)"
         key: "Description"
-        initialValue: '{{ runCommand "bash -lc \"$HOME/.config/lazygit/scripts/lazygit-ai-commit-draft body\"" }}'
+        initialValue: '{{ runCommand "bash -lc \"$HOME/.config/lazygit/scripts/lazygit-ai-commit-draft cached_body\"" }}'
     command: |
       #!/bin/bash
       set -euo pipefail

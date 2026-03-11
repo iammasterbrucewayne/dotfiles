@@ -2,6 +2,13 @@
 set -euo pipefail
 
 field="${1:-full}"
+cached_only=0
+case "$field" in
+  cached_subject|cached_body|cached_full)
+    cached_only=1
+    field="${field#cached_}"
+    ;;
+esac
 primary_model="${LAZYGIT_AI_COMMIT_MODEL:-opencode/minimax-m2.5-free}"
 fallback_model="${LAZYGIT_AI_COMMIT_FALLBACK_MODEL:-opencode/gpt-5-nano}"
 variant="${LAZYGIT_AI_COMMIT_VARIANT:-minimal}"
@@ -12,6 +19,13 @@ if [ "$field" = "prewarm" ]; then
   field="full"
 else
   prewarm=0
+fi
+
+if [ "$field" = "commit" ]; then
+  commit_mode=1
+  field="full"
+else
+  commit_mode=0
 fi
 
 if git diff --cached --quiet; then
@@ -50,12 +64,32 @@ if [ -f "$hash_file" ]; then
   cached_hash="$(cat "$hash_file")"
 fi
 
+cache_fresh=0
+if [ -f "$msg_file" ] && [ "$cached_hash" = "$staged_hash" ]; then
+  cache_fresh=1
+fi
+
 generate=0
-if [ ! -f "$msg_file" ] || [ "$cached_hash" != "$staged_hash" ]; then
+if [ "$cache_fresh" -ne 1 ]; then
   generate=1
 fi
 if [ "$prewarm" -eq 1 ]; then
   generate=1
+fi
+if [ "$cached_only" -eq 1 ]; then
+  generate=0
+fi
+
+if [ "$cached_only" -eq 1 ] && [ "$cache_fresh" -ne 1 ]; then
+  case "$field" in
+    subject)
+      printf "%s" "Run A to generate AI draft"
+      ;;
+    body|full)
+      printf "%s" ""
+      ;;
+  esac
+  exit 0
 fi
 
 used_model=""
@@ -99,14 +133,14 @@ $staged_diff" 2>/dev/null)"; then
   commit_msg=""
   if ! run_with_model "$primary_model"; then
     if [ "$strict_primary" = "1" ] || [ -z "$fallback_model" ]; then
-      if [ "$prewarm" -eq 1 ]; then
+      if [ "$prewarm" -eq 1 ] || [ "$commit_mode" -eq 1 ]; then
         echo "Failed to generate AI commit draft with $primary_model"
         exit 1
       fi
       exit 0
     fi
     if ! run_with_model "$fallback_model"; then
-      if [ "$prewarm" -eq 1 ]; then
+      if [ "$prewarm" -eq 1 ] || [ "$commit_mode" -eq 1 ]; then
         echo "Failed to generate AI commit draft with both $primary_model and $fallback_model"
         exit 1
       fi
@@ -119,7 +153,22 @@ $staged_diff" 2>/dev/null)"; then
   printf "%s\n" "$used_model" > "$model_file"
 fi
 
+if [ ! -f "$msg_file" ]; then
+  if [ "$prewarm" -eq 1 ] || [ "$commit_mode" -eq 1 ]; then
+    echo "No AI draft available"
+    exit 1
+  fi
+  exit 0
+fi
+
 commit_msg="$(cat "$msg_file")"
+
+if [ "$commit_mode" -eq 1 ]; then
+  printf "%s\n" "$commit_msg" > .git/COMMIT_EDITMSG
+  git commit -F .git/COMMIT_EDITMSG
+  exit 0
+fi
+
 subject="${commit_msg%%$'\n'*}"
 
 body="$(printf "%s" "$commit_msg" | python3 -c 'import sys

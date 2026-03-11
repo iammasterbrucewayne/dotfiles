@@ -4,8 +4,8 @@ Lazygit config lives at `lazygit/config.yml` and is symlinked to `~/.config/lazy
 
 ## AI commit flow
 
-- `A`: Open AI-prefilled commit summary and description prompts, then commit
-- `G`: Prewarm/regenerate AI draft cache with visible loading feedback
+- `A`: Generate/refresh AI commit draft with visible loading feedback
+- `E`: Open editable commit summary/description prefilled from cached AI draft, then commit
 
 The AI helper script is `lazygit/scripts/lazygit-ai-commit-draft`.
 
